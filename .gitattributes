@@ -1,0 +1,7 @@
+﻿* text=auto eol=lf
+*.png binary
+*.svg text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.js text eol=lf
+*.yml text eol=lf

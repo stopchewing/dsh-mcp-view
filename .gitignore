@@ -1,0 +1,16 @@
+# dependencies
+node_modules/
+
+# build & test output
+dist/
+coverage/
+*.tsbuildinfo
+
+# logs & os noise
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# generated preview artifact (rebuild with docs/preview.template.html + docs/preview-data.json)
+docs/preview.html

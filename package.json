@@ -1,0 +1,54 @@
+{
+  "name": "dsh-mcp-view",
+  "version": "0.1.0",
+  "description": "MCP Tools panel for the DeepSeek Harness Web GUI: see every MCP server and tool available in your session, grouped by server, with transport info, JSON schemas, live search and last-used times derived from real session logs.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md",
+    "README.ru.md",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "deepseek",
+    "plugin",
+    "mcp",
+    "mcp-server",
+    "mcp-tools",
+    "web-ui",
+    "tool-registry"
+  ],
+  "author": "stopchewing",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stopchewing/dsh-mcp-view.git"
+  },
+  "homepage": "https://github.com/stopchewing/dsh-mcp-view#readme",
+  "bugs": {
+    "url": "https://github.com/stopchewing/dsh-mcp-view/issues"
+  }
+}

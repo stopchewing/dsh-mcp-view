@@ -1,0 +1,16 @@
+# dsh-mcp-view bundle patch: mounts the dual-face plugin into the web profile
+# roster. The node half (exports ".") registers the /api/mcp-view/tools route
+# (MCP servers from loader entries + live tool schemas from ctx.tools); the
+# browser half (exports "./client", served at /plugins/dsh-mcp-view/client.js)
+# renders the "MCP Tools" toggle in the sidebar footer and the floating panel
+# in the shell.overlay slot.
+#
+# Activate by adding this patch layer (dsh.bundle.patch) to the profile and
+# placing the package into the profile's node_modules:
+#   dsh plugin --profile web add link:<path-to-this-package>
+# or manually: copy/symlink this package into ~/.dsh/profiles/web/node_modules
+# and add `- insert: [{id: mcp-view, name: 'dsh-mcp-view'}]` to
+# ~/.dsh/profiles/web/cordis.patch.yml.
+- insert:
+    - id: mcp-view
+      name: 'dsh-mcp-view'

@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<title>dsh-mcp-view — MCP Tools panel preview</title>
+<style>
+  :root {
+    --bg-base:#ffffff; --bg-layer-2:#f6f7f9; --border-l1:#e4e7ec; --border-l2:#d9dde3;
+    --label-primary:#1a1d21; --label-secondary:#5c6370; --label-tertiary:#8a919e;
+    --interactive-bg-hover:#eef0f3; --state-business-primary:#2f6fed; --state-success-primary:#1f9d55;
+    --state-warn-primary:#c97b1e; --state-error-primary:#d93a3a; --separator-primary:#eceef2;
+    --input-major:#fbfbfc; --nav-hover:#eef0f3; --nav-active:#e2e8f5;
+    --shadow-lv3:0 8px 28px rgba(15,23,42,.16);
+    --font: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono: ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;
+    --sidebar-fill:#f0f2f5; --chat-bubble:#f0f2f5;
+  }
+  html[data-theme="dark"] {
+    --bg-base:#16181d; --bg-layer-2:#1d2026; --border-l1:#2a2e37; --border-l2:#343946;
+    --label-primary:#e8eaee; --label-secondary:#9aa3b2; --label-tertiary:#6b7484;
+    --interactive-bg-hover:#242833; --state-business-primary:#6ea2ff; --state-success-primary:#3ecf8e;
+    --state-warn-primary:#f0a24a; --state-error-primary:#ff6b6b; --separator-primary:#2a2e37;
+    --input-major:#12141a; --nav-hover:#242833; --nav-active:#26314a;
+    --shadow-lv3:0 8px 28px rgba(0,0,0,.55);
+    --sidebar-fill:#12141a; --chat-bubble:#23262e;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:var(--font); background:var(--bg-base); color:var(--label-primary); overflow:hidden; }
+
+  /* --- mock DSH app shell --- */
+  .app { display:flex; height:100vh; position:relative; }
+  .sidebar { width:232px; flex:none; background:var(--sidebar-fill); border-right:1px solid var(--border-l1); display:flex; flex-direction:column; padding:12px 10px; gap:4px; }
+  .brand { display:flex; align-items:center; gap:8px; font-weight:700; font-size:13px; padding:6px 8px 14px; }
+  .brandDot { width:18px; height:18px; border-radius:6px; background:linear-gradient(135deg,#2f6fed,#7c3aed); }
+  .mockBtn { border:1px solid var(--border-l2); background:var(--bg-base); color:var(--label-primary); border-radius:8px; padding:6px 10px; font-size:12px; font-weight:600; text-align:left; }
+  .mockNav { display:flex; flex-direction:column; gap:2px; margin-top:10px; }
+  .mockNav div { border-radius:8px; padding:7px 10px; font-size:12.5px; color:var(--label-secondary); }
+  .mockNav div.on { background:var(--nav-active); color:var(--label-primary); font-weight:600; }
+  .center { flex:1; display:flex; flex-direction:column; min-width:0; }
+  .chat { flex:1; padding:28px 36px; display:flex; flex-direction:column; gap:16px; justify-content:flex-end; overflow:hidden; }
+  .bubble { max-width:560px; padding:10px 14px; border-radius:12px; font-size:13px; line-height:1.55; color:var(--label-primary); }
+  .bubble.user { align-self:flex-end; background:var(--state-business-primary); color:#fff; opacity:.85; }
+  .bubble.agent { align-self:flex-start; background:var(--chat-bubble); color:var(--label-secondary); }
+  .composer { flex:none; margin:0 36px 24px; border:1px solid var(--border-l2); background:var(--input-major); border-radius:12px; padding:10px 14px; font-size:12.5px; color:var(--label-tertiary); }
+
+  /* --- the actual dsh-mcp-view panel (CSS copied 1:1 from lib/client.js) --- */
+  .dmv-panel{background:var(--bg-base);border:1px solid var(--border-l2);box-shadow:var(--shadow-lv3);color:var(--label-primary);font-family:var(--font);flex-direction:column;gap:8px;padding:12px 14px 14px;display:flex;position:absolute;top:16px;right:16px;width:min(440px,calc(100vw - 32px));max-height:calc(100vh - 32px);z-index:30;border-radius:14px;overflow:hidden}
+  .dmv-panelHeader{flex:none;align-items:center;gap:8px;display:flex}
+  .dmv-panelTitle{color:var(--label-primary);white-space:nowrap;flex:1;margin:0;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;min-width:0}
+  .dmv-countBadge{color:var(--state-business-primary);border:1px solid var(--state-business-primary);white-space:nowrap;border-radius:999px;padding:0 7px;font-size:11px;line-height:1.7;display:inline-block}
+  .dmv-iconButton{width:24px;height:24px;color:var(--label-secondary);cursor:pointer;background:0 0;border:none;border-radius:6px;justify-content:center;align-items:center;padding:0;font-size:12px;display:inline-flex;flex:none}
+  .dmv-iconButton:hover{background:var(--interactive-bg-hover);color:var(--label-primary)}
+  .dmv-iconButton[data-label]{font-size:12px;font-weight:600;gap:4px;width:auto;padding:0 6px;color:var(--label-secondary)}
+  .dmv-summary{flex:none;flex-wrap:wrap;gap:4px 10px;font-size:11.5px;color:var(--label-tertiary);display:flex}
+  .dmv-search{color:var(--label-primary);background:var(--input-major);border:1px solid var(--border-l2);border-radius:8px;outline:none;flex:none;padding:5px 10px;font-size:12.5px;width:100%;box-sizing:border-box}
+  .dmv-body{flex-direction:column;flex:1;min-height:0;gap:8px;display:flex;overflow-y:auto}
+  .dmv-server{border:1px solid var(--border-l1);background:var(--bg-layer-2);border-radius:10px;flex:none;flex-direction:column;display:flex;overflow:hidden}
+  .dmv-serverHead{width:100%;text-align:left;cursor:pointer;background:0 0;border:none;flex:none;align-items:center;gap:8px;padding:7px 10px;font:inherit;color:var(--label-primary);display:flex;flex-wrap:wrap}
+  .dmv-serverHead:hover{background:var(--interactive-bg-hover)}
+  .dmv-serverName{color:var(--label-primary);font-family:var(--mono);font-size:12.5px;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+  .dmv-serverMeta{flex:none;align-items:center;gap:6px;display:flex;flex-wrap:wrap}
+  .dmv-badge{border:1px solid var(--border-l2);color:var(--label-secondary);white-space:nowrap;border-radius:999px;padding:0 7px;font-size:10.5px;line-height:1.7;display:inline-block}
+  .dmv-badge[data-kind=transport]{color:var(--state-business-primary);border-color:var(--state-business-primary)}
+  .dmv-badge[data-kind=ok]{color:var(--state-success-primary);border-color:var(--state-success-primary)}
+  .dmv-badge[data-kind=disabled]{color:var(--label-tertiary);border-color:var(--border-l2)}
+  .dmv-badge[data-kind=warn]{color:var(--state-warn-primary);border-color:var(--state-warn-primary)}
+  .dmv-serverBody{border-top:1px solid var(--separator-primary);flex-direction:column;display:flex}
+  .dmv-endpoint{color:var(--label-tertiary);font-family:var(--mono);font-size:11px;padding:4px 12px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:none}
+  .dmv-tool{border-top:1px solid var(--separator-primary);flex-direction:column;display:flex}
+  .dmv-toolHead{width:100%;text-align:left;cursor:pointer;background:0 0;border:none;align-items:center;gap:8px;padding:5px 10px;font:inherit;display:flex;min-width:0}
+  .dmv-toolHead:hover{background:var(--interactive-bg-hover)}
+  .dmv-toolName{color:var(--label-primary);font-family:var(--mono);font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .dmv-toolUsed{color:var(--label-tertiary);font-size:10.5px;white-space:nowrap;flex:none;margin-left:auto;padding-left:8px}
+  .dmv-toolDetails{flex-direction:column;gap:6px;padding:0 10px 8px;display:flex;min-width:0}
+  .dmv-toolFull{color:var(--label-tertiary);font-family:var(--mono);font-size:10.5px;word-break:break-all}
+  .dmv-toolDesc{color:var(--label-secondary);font-size:12px;line-height:1.45;margin:0;overflow-wrap:anywhere}
+  .dmv-schema{background:var(--bg-base);border:1px solid var(--border-l2);border-radius:8px;padding:7px 9px;overflow:auto;max-height:220px}
+  .dmv-schema pre{font-family:var(--mono);font-size:11px;color:var(--label-primary);margin:0;white-space:pre-wrap;word-break:break-all}
+  .dmv-other{border:1px solid var(--border-l1);background:var(--bg-layer-2);border-radius:10px;flex:none;flex-direction:column;display:flex;overflow:hidden}
+  .dmv-otherHead{width:100%;cursor:pointer;user-select:none;flex:none;align-items:center;gap:8px;padding:7px 10px;font-size:12px;font-weight:600;color:var(--label-primary);background:0 0;border:none;text-align:left;display:flex}
+  .dmv-otherHead:hover{background:var(--interactive-bg-hover)}
+  .dmv-otherChips{flex:none;flex-wrap:wrap;gap:4px;padding:0 10px 9px;display:flex}
+  .dmv-chip{color:var(--label-secondary);background:var(--bg-base);border:1px solid var(--border-l1);border-radius:6px;padding:1px 6px;font-family:var(--mono);font-size:10.5px;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><span class="brandDot"></span>DeepSeek Harness</div>
+    <div class="mockBtn">+ New session</div>
+    <div class="mockNav">
+      <div class="on">MCP Tools plugin dev</div>
+      <div>Docs API project</div>
+      <div>Research sandbox</div>
+    </div>
+  </aside>
+  <main class="center">
+    <div class="chat">
+      <div class="bubble user">Which MCP servers are available right now?</div>
+      <div class="bubble agent">Open the “MCP Tools” panel at the bottom of the sidebar — every server and tool, grouped by server, with input schemas and last-used times.</div>
+      <div class="bubble user">Nice, thanks!</div>
+    </div>
+    <div class="composer">Ask anything…  —  demo shell; the panel is the real component</div>
+  </main>
+
+  <!-- dsh-mcp-view panel -->
+  <div class="dmv-panel" id="panel"></div>
+</div>
+
+<script>
+const DATA = __DATA__;
+const THEME = new URLSearchParams(location.search).get("theme") === "dark" ? "dark" : "light";
+document.documentElement.dataset.theme = THEME;
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function used(iso){ if(!iso) return null; const ms=Date.now()-Date.parse(iso); if(!isFinite(ms)) return null;
+  if(ms<0||ms<6e4) return "just now"; const m=Math.floor(ms/6e4); if(m<60) return m+"m ago";
+  const h=Math.floor(m/60); if(h<24) return h+"h ago"; const d=Math.floor(h/24); if(d<30) return d+"d ago";
+  const dt=new Date(iso); return dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0"); }
+function icon(){
+  return '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="display:block"><path d="M2 3.5A1.5 1.5 0 0 1 3.5 2h2A1.5 1.5 0 0 1 7 3.5v2A1.5 1.5 0 0 1 5.5 7h-2A1.5 1.5 0 0 1 2 5.5v-2Zm7 0A1.5 1.5 0 0 1 10.5 2h2A1.5 1.5 0 0 1 14 3.5v2A1.5 1.5 0 0 1 12.5 7h-2A1.5 1.5 0 0 1 9 5.5v-2ZM2 10.5A1.5 1.5 0 0 1 3.5 9h2A1.5 1.5 0 0 1 7 10.5v2A1.5 1.5 0 0 1 5.5 14h-2A1.5 1.5 0 0 1 2 12.5v-2Zm7 0a1.5 1.5 0 0 1 1.5-1.5h2a1.5 1.5 0 0 1 1.5 1.5v2a1.5 1.5 0 0 1-1.5 1.5h-2a1.5 1.5 0 0 1-1.5-1.5v-2Z" fill="currentColor"/></svg>'; }
+
+function toolRow(tool, open, schemaOpen){
+  const tu = used(tool.lastUsedAt);
+  return '<div class="dmv-tool">'
+    + '<button type="button" class="dmv-toolHead"><span class="dmv-toolName">'+(open?"▾ ":"▸ ")+esc(tool.rawName)+'</span>'
+    + (tu?'<span class="dmv-toolUsed">'+tu+'</span>':'') + '</button>'
+    + (open ? '<div class="dmv-toolDetails">'
+        + (tool.description ? '<p class="dmv-toolDesc">'+esc(tool.description)+'</p>' : '')
+        + '<div class="dmv-toolFull">'+esc(tool.name)+'</div>'
+        + (schemaOpen ? '<div class="dmv-schema"><pre>'+esc(JSON.stringify(tool.parameters,null,2))+'</pre></div>' : '')
+      + '</div>' : '')
+    + '</div>';
+}
+
+function render(){
+  const servers = DATA.servers;
+  const su = used(servers[0].lastUsedAt);
+  let body = '';
+  servers.forEach((s, si) => {
+    const open = si === 0;              // first server expanded in the preview
+    const badges = '<span class="dmv-badge" data-kind="transport">'+esc(s.transport)+'</span>'
+      + (s.disabled ? '<span class="dmv-badge" data-kind="disabled">disabled</span>'
+        : s.toolCount>0 ? '<span class="dmv-badge" data-kind="ok">'+s.toolCount+'</span>'
+        : '<span class="dmv-badge" data-kind="warn">0</span>');
+    const head = '<button type="button" class="dmv-serverHead">'
+      + '<span class="dmv-serverName">'+(open?"▾ ":"▸ ")+esc(s.serverName)+'</span>'
+      + (used(s.lastUsedAt)?'<span class="dmv-toolUsed">used '+used(s.lastUsedAt)+'</span>':'')
+      + '<span class="dmv-serverMeta">'+badges+'</span></button>';
+    let toolsHtml = '';
+    if (open){
+      toolsHtml += '<div class="dmv-serverBody">'
+        + (s.endpoint ? '<div class="dmv-endpoint">'+esc(s.endpoint)+'</div>' : '');
+      // show up to 5 tools in the expanded server, one with its schema open
+      const shown = s.tools.slice(0,5);
+      shown.forEach((t, ti) => toolsHtml += toolRow(t, true, ti === 1));
+      toolsHtml += '</div>';
+    }
+    body += '<div class="dmv-server">'+head+toolsHtml+'</div>';
+  });
+  // other tools section
+  const others = DATA.otherToolNames || [];
+  body += '<div class="dmv-other"><button type="button" class="dmv-otherHead">▾ Other tools ('+others.length+')</button>'
+    + '<div class="dmv-otherChips">'+others.map(o=>'<span class="dmv-chip">'+esc(o)+'</span>').join('')+'</div></div>';
+
+  document.getElementById('panel').innerHTML =
+    '<div class="dmv-panelHeader"><h2 class="dmv-panelTitle">'+icon()+' MCP Tools'
+      + '<span class="dmv-countBadge">'+DATA.totalMcpTools+'</span></h2>'
+      + '<button class="dmv-iconButton" data-label>−</button>'
+      + '<button class="dmv-iconButton">'+'<svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="display:block"><path d="M13.65 8a5.65 5.65 0 1 1-1.65-4L13.5 2.5V7h-4.5l1.9-1.9A4 4 0 1 0 12 8h1.65Z" fill="currentColor"/></svg>'+'</button>'
+      + '<button class="dmv-iconButton">'+'<svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="display:block"><path d="M4.5 4.5 11.5 11.5M11.5 4.5 4.5 11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'+'</button></div>'
+    + '<div class="dmv-summary"><span>'+servers.length+' servers</span><span>'+DATA.totalMcpTools+' MCP tools</span><span>'+DATA.otherToolCount+' other</span><span>usage from session logs</span></div>'
+    + '<input class="dmv-search" placeholder="Filter tools, servers…" value="" spellcheck="false" />'
+    + '<div class="dmv-body">'+body+'</div>';
+}
+render();
+</script>
+</body>
+</html>

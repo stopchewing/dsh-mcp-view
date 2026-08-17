@@ -1,0 +1,275 @@
+{
+  "ok": true,
+  "generatedAt": "2026-08-17T12:00:00.000Z",
+  "totalMcpTools": 14,
+  "otherToolCount": 6,
+  "otherToolNames": [
+    "read_file",
+    "write_file",
+    "edit_file",
+    "list_dir",
+    "run_command",
+    "search_glob"
+  ],
+  "usage": {
+    "available": true,
+    "scannedAt": "2026-08-17T12:00:00.000Z"
+  },
+  "servers": [
+    {
+      "id": "mcp-search",
+      "serverName": "search-mcp",
+      "transport": "streamable-http",
+      "endpoint": "http://localhost:9001/mcp",
+      "disabled": false,
+      "active": true,
+      "toolCount": 3,
+      "lastUsedAt": "now-5m",
+      "tools": [
+        {
+          "name": "mcp__search-mcp__search",
+          "rawName": "search",
+          "description": "Full-text search across the indexed knowledge base. Returns ranked results with snippet highlights.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "query": { "type": "string", "description": "Search query" },
+              "limit": { "type": "integer", "default": 10, "description": "Max results" },
+              "offset": { "type": "integer", "default": 0 }
+            },
+            "required": ["query"]
+          },
+          "lastUsedAt": "now-5m"
+        },
+        {
+          "name": "mcp__search-mcp__suggest",
+          "rawName": "suggest",
+          "description": "Autocomplete suggestions for a partial query.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "prefix": { "type": "string", "description": "Partial query prefix" }
+            },
+            "required": ["prefix"]
+          },
+          "lastUsedAt": null
+        },
+        {
+          "name": "mcp__search-mcp__get_document",
+          "rawName": "get_document",
+          "description": "Fetch a full document by its id.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "docId": { "type": "string" }
+            },
+            "required": ["docId"]
+          },
+          "lastUsedAt": "now-2h"
+        }
+      ]
+    },
+    {
+      "id": "mcp-docs",
+      "serverName": "docs-mcp",
+      "transport": "streamable-http",
+      "endpoint": "https://docs.example.com/mcp",
+      "disabled": false,
+      "active": true,
+      "toolCount": 3,
+      "lastUsedAt": "now-1d",
+      "tools": [
+        {
+          "name": "mcp__docs-mcp__get_page",
+          "rawName": "get_page",
+          "description": "Return the rendered markdown of a documentation page by id or alias.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "id_or_alias_or_url": { "type": "string" },
+              "body_limit": { "type": "integer", "default": 12000 }
+            },
+            "required": ["id_or_alias_or_url"]
+          },
+          "lastUsedAt": "now-1d"
+        },
+        {
+          "name": "mcp__docs-mcp__search_docs",
+          "rawName": "search_docs",
+          "description": "Search the documentation corpus by topic or keyword.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "query": { "type": "string" },
+              "limit": { "type": "integer", "default": 5 }
+            },
+            "required": ["query"]
+          },
+          "lastUsedAt": null
+        },
+        {
+          "name": "mcp__docs-mcp__list_topics",
+          "rawName": "list_topics",
+          "description": "List top-level documentation topics, optionally filtered by category.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "category": { "type": "string", "default": "" }
+            }
+          },
+          "lastUsedAt": null
+        }
+      ]
+    },
+    {
+      "id": "mcp-build",
+      "serverName": "build-mcp",
+      "transport": "stdio",
+      "endpoint": "npx -y @acme/build-mcp",
+      "disabled": false,
+      "active": true,
+      "toolCount": 3,
+      "lastUsedAt": "now-3h",
+      "tools": [
+        {
+          "name": "mcp__build-mcp__build_project",
+          "rawName": "build_project",
+          "description": "Build the project. A full rebuild is optional.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "sourceSet": { "type": ["string", "null"], "default": null },
+              "fullRebuild": { "type": ["boolean", "null"], "default": null }
+            }
+          },
+          "lastUsedAt": null
+        },
+        {
+          "name": "mcp__build-mcp__run_tests",
+          "rawName": "run_tests",
+          "description": "Run the test suite for a module or for the whole project.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "moduleName": { "type": "string", "description": "Module to test" },
+              "full": { "type": ["boolean", "null"], "default": null }
+            }
+          },
+          "lastUsedAt": "now-3h"
+        },
+        {
+          "name": "mcp__build-mcp__lint",
+          "rawName": "lint",
+          "description": "Run the linter over a set of paths.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "paths": { "type": "array", "items": { "type": "string" } }
+            },
+            "required": ["paths"]
+          },
+          "lastUsedAt": null
+        }
+      ]
+    },
+    {
+      "id": "mcp-analytics",
+      "serverName": "analytics-mcp",
+      "transport": "streamable-http",
+      "endpoint": "http://localhost:9004/mcp",
+      "disabled": false,
+      "active": true,
+      "toolCount": 3,
+      "lastUsedAt": "now-2d",
+      "tools": [
+        {
+          "name": "mcp__analytics-mcp__query_metrics",
+          "rawName": "query_metrics",
+          "description": "Query aggregated metrics over a time window.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "query": { "type": "string" },
+              "from": { "type": "string" },
+              "to": { "type": "string" }
+            },
+            "required": ["query"]
+          },
+          "lastUsedAt": "now-2d"
+        },
+        {
+          "name": "mcp__analytics-mcp__daily_report",
+          "rawName": "daily_report",
+          "description": "Generate the daily summary report for a date.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "date": { "type": "string", "default": "" }
+            }
+          },
+          "lastUsedAt": null
+        },
+        {
+          "name": "mcp__analytics-mcp__forecast",
+          "rawName": "forecast",
+          "description": "Forecast a metric over a horizon of days.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "metric": { "type": "string" },
+              "horizon": { "type": "integer", "default": 7 }
+            },
+            "required": ["metric"]
+          },
+          "lastUsedAt": null
+        }
+      ]
+    },
+    {
+      "id": "mcp-notifications",
+      "serverName": "notifications-mcp",
+      "transport": "streamable-http",
+      "endpoint": "https://notify.example.com/mcp",
+      "disabled": false,
+      "active": true,
+      "toolCount": 2,
+      "lastUsedAt": null,
+      "tools": [
+        {
+          "name": "mcp__notifications-mcp__send_notification",
+          "rawName": "send_notification",
+          "description": "Send a notification to a channel with an optional priority.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "channel": { "type": "string" },
+              "message": { "type": "string" },
+              "priority": { "type": "string", "default": "normal" }
+            },
+            "required": ["channel", "message"]
+          },
+          "lastUsedAt": null
+        },
+        {
+          "name": "mcp__notifications-mcp__list_channels",
+          "rawName": "list_channels",
+          "description": "List the channels this server can send to.",
+          "parameters": { "type": "object", "properties": {} },
+          "lastUsedAt": null
+        }
+      ]
+    },
+    {
+      "id": "mcp-legacy-data",
+      "serverName": "legacy-data-mcp",
+      "transport": "streamable-http",
+      "endpoint": "http://localhost:9006/mcp",
+      "disabled": true,
+      "active": false,
+      "toolCount": 0,
+      "lastUsedAt": null,
+      "tools": []
+    }
+  ],
+  "unknownTools": []
+}

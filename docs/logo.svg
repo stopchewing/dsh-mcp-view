@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2f6fed"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <!-- 2x2 tool grid, mirroring the in-panel icon -->
+  <g fill="#ffffff">
+    <rect x="30" y="30" width="26" height="26" rx="7"/>
+    <rect x="72" y="30" width="26" height="26" rx="7"/>
+    <rect x="30" y="72" width="26" height="26" rx="7"/>
+    <rect x="72" y="72" width="26" height="26" rx="7"/>
+  </g>
+  <g fill="#2f6fed">
+    <rect x="37" y="37" width="12" height="12" rx="3"/>
+    <rect x="79" y="37" width="12" height="12" rx="3"/>
+    <rect x="37" y="79" width="12" height="12" rx="3"/>
+    <rect x="79" y="79" width="12" height="12" rx="3"/>
+  </g>
+</svg>

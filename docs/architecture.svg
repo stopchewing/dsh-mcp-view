@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="400" viewBox="0 0 980 400" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#8a919e"/>
+    </marker>
+    <linearGradient id="hostGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2f6fed"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+
+  <!-- column labels -->
+  <text x="150" y="26" text-anchor="middle" font-size="12" font-weight="700" fill="#5c6370">BROWSER · Web GUI</text>
+  <text x="520" y="26" text-anchor="middle" font-size="12" font-weight="700" fill="#5c6370">HOST PROCESS · dsh web</text>
+  <text x="860" y="26" text-anchor="middle" font-size="12" font-weight="700" fill="#5c6370">DATA SOURCES</text>
+
+  <!-- browser box -->
+  <rect x="30" y="44" width="240" height="300" rx="14" fill="#f6f7f9" stroke="#d9dde3" stroke-width="1.5"/>
+  <text x="150" y="72" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1d21">client.js</text>
+  <text x="150" y="90" text-anchor="middle" font-size="10.5" fill="#8a919e" font-family="ui-monospace,Menlo,Consolas,monospace">served at /plugins/dsh-mcp-view/client.js</text>
+
+  <rect x="50" y="108" width="200" height="54" rx="9" fill="#ffffff" stroke="#d9dde3"/>
+  <text x="66" y="128" font-size="11.5" font-weight="600" fill="#1a1d21">sidebar.footer.action</text>
+  <text x="66" y="146" font-size="10.5" fill="#5c6370">toggle button «MCP Tools»</text>
+
+  <rect x="50" y="176" width="200" height="54" rx="9" fill="#ffffff" stroke="#d9dde3"/>
+  <text x="66" y="196" font-size="11.5" font-weight="600" fill="#1a1d21">shell.overlay</text>
+  <text x="66" y="214" font-size="10.5" fill="#5c6370">floating inventory panel</text>
+
+  <rect x="50" y="244" width="200" height="62" rx="9" fill="#eef1fb" stroke="#2f6fed" stroke-width="1.5"/>
+  <text x="66" y="266" font-size="11.5" font-weight="700" fill="#2f6fed">fetch</text>
+  <text x="66" y="284" font-size="10.5" fill="#1a1d21" font-family="ui-monospace,Menlo,Consolas,monospace">GET /api/mcp-view/tools</text>
+  <text x="66" y="298" font-size="9.5" fill="#8a919e">auto-refresh 10s · search · expand</text>
+
+  <!-- host box -->
+  <rect x="300" y="44" width="440" height="300" rx="14" fill="#f6f7f9" stroke="#d9dde3" stroke-width="1.5"/>
+  <text x="520" y="72" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1d21">index.js</text>
+  <text x="520" y="90" text-anchor="middle" font-size="10.5" fill="#8a919e" font-family="ui-monospace,Menlo,Consolas,monospace">Cordis plugin · inject webServer / tools / loader</text>
+
+  <rect x="330" y="108" width="380" height="56" rx="9" fill="url(#hostGrad)"/>
+  <text x="520" y="132" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">route handler</text>
+  <text x="520" y="150" text-anchor="middle" font-size="10.5" fill="#e9edff" font-family="ui-monospace,Menlo,Consolas,monospace">collectSnapshot(ctx) → JSON inventory</text>
+
+  <rect x="330" y="180" width="380" height="52" rx="9" fill="#ffffff" stroke="#d9dde3"/>
+  <text x="348" y="201" font-size="11.5" font-weight="600" fill="#1a1d21">ctx.tools.schemas()</text>
+  <text x="348" y="219" font-size="10.5" fill="#5c6370">live ToolRuntime · mcp__&lt;server&gt;__&lt;tool&gt; names</text>
+
+  <rect x="330" y="242" width="380" height="52" rx="9" fill="#ffffff" stroke="#d9dde3"/>
+  <text x="348" y="263" font-size="11.5" font-weight="600" fill="#1a1d21">ctx.loader entries + session scan</text>
+  <text x="348" y="281" font-size="10.5" fill="#5c6370">mcp-client configs · last-used from logs</text>
+
+  <text x="520" y="322" text-anchor="middle" font-size="10" fill="#8a919e">incremental scan · memoized by (mtime, size) · 15s TTL</text>
+
+  <!-- data sources -->
+  <rect x="770" y="44" width="180" height="130" rx="14" fill="#f6f7f9" stroke="#d9dde3" stroke-width="1.5"/>
+  <text x="860" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1d21">MCP servers</text>
+  <text x="860" y="92" text-anchor="middle" font-size="10" fill="#5c6370">dsh-mcp-client instances</text>
+  <text x="860" y="110" text-anchor="middle" font-size="10" fill="#5c6370">stdio · streamable-http</text>
+  <text x="860" y="128" text-anchor="middle" font-size="10" fill="#8a919e">register tools into the</text>
+  <text x="860" y="144" text-anchor="middle" font-size="10" fill="#8a919e">shared ToolRuntime</text>
+
+  <rect x="770" y="196" width="180" height="148" rx="14" fill="#f6f7f9" stroke="#d9dde3" stroke-width="1.5"/>
+  <text x="860" y="224" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1d21">Session logs</text>
+  <text x="860" y="244" text-anchor="middle" font-size="10" fill="#5c6370">~/.dsh/sessions/…</text>
+  <text x="860" y="262" text-anchor="middle" font-size="10" fill="#5c6370" font-family="ui-monospace,Menlo,Consolas,monospace">session.jsonl[.zstd]</text>
+  <text x="860" y="280" text-anchor="middle" font-size="10" fill="#8a919e">tool/call events carry</text>
+  <text x="860" y="296" text-anchor="middle" font-size="10" fill="#8a919e">name + timestamp →</text>
+  <text x="860" y="312" text-anchor="middle" font-size="10" fill="#8a919e">last-used per tool</text>
+
+  <!-- arrows -->
+  <line x1="250" y1="275" x2="296" y2="275" stroke="#8a919e" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="710" y1="160" x2="766" y2="105" stroke="#8a919e" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="710" y1="268" x2="766" y2="268" stroke="#8a919e" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="710" y1="255" x2="766" y2="300" stroke="#8a919e" stroke-width="2" marker-end="url(#arrow)"/>
+</svg>
