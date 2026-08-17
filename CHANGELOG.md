@@ -27,4 +27,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Model guidance**: the plugin announces itself in the tool-guidance band (`systemPrompt.section`).
 - Repo polish: screenshots (light/dark), architecture diagram, MIT license, changelog.
 
+## [0.1.1] - 2026-08-17
+
+### Changed
+
+- **Privacy**: preview screenshots now use a fictional MCP inventory, and the
+  README text no longer references any real server names or workspaces — the
+  repository contains no trace of a specific user's MCP setup.
+- Author metadata uses the public GitHub handle.
+
+[0.1.1]: https://github.com/stopchewing/dsh-mcp-view/releases/tag/v0.1.1
 [0.1.0]: https://github.com/stopchewing/dsh-mcp-view/releases/tag/v0.1.0
