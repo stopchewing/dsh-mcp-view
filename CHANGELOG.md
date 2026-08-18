@@ -27,6 +27,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Model guidance**: the plugin announces itself in the tool-guidance band (`systemPrompt.section`).
 - Repo polish: screenshots (light/dark), architecture diagram, MIT license, changelog.
 
+## [0.2.0] - 2026-08-17
+
+### Added
+
+- **Per-session view**: toggle that shows only the tools the current session's
+  agent really sees (via `ctx.agents` → agent scope → `tools.schemas(scope)`).
+- **Health checks**: optional `?health=1` probes streamable-http endpoints
+  (HEAD, 3 s timeout) and shows an up/down badge per server.
+- **Usage tab**: total tool calls, calls-per-day chart (last 14 days) and the
+  most-used MCP tools — from session logs.
+- **Search by parameter names**: the filter now also matches `parameters` keys.
+- **Sorting** (name / tools / used / favorites) and **favorites (stars)**,
+  persisted to `localStorage`, along with expand/collapse state.
+- **Copy public tool name** in one click; **export** inventory to JSON or
+  Markdown.
+- **Plugin config** via `cordis.patch.yml` (`enabled`, `announceToAgent`).
+- **Tests** (Node's `node --test`, zero deps) and **TS check** (`tsc --checkJs`
+  on the host module); GitHub Actions CI (test + auto-publish on tag).
+  Scan now bounded by `MAX_SCAN_FILES` / `MAX_SCAN_BYTES`.
+
 ## [0.1.1] - 2026-08-17
 
 ### Changed
@@ -36,5 +56,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   repository contains no trace of a specific user's MCP setup.
 - Author metadata uses the public GitHub handle.
 
+[0.2.0]: https://github.com/stopchewing/dsh-mcp-view/releases/tag/v0.2.0
 [0.1.1]: https://github.com/stopchewing/dsh-mcp-view/releases/tag/v0.1.1
 [0.1.0]: https://github.com/stopchewing/dsh-mcp-view/releases/tag/v0.1.0

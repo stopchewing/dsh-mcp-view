@@ -33,9 +33,26 @@ DSH runs your MCP servers (docs, build & analytics — whatever you have configu
 | 🖥 **All servers, one panel** | Every `dsh-mcp-client` instance in your profile, with transport (`stdio` / `streamable-http`) and endpoint (command or URL), plus connection state (active / disabled / no tools). |
 | 🗂 **Collapsed by default** | Servers are folded into a single compact row; one click expands the tool list. `+` / `−` in the header expands or collapses everything. |
 | 🧬 **Full JSON schemas** | Each tool shows its raw name, description and the exact `inputSchema` the model sees — expandable, prettified. |
-| 🕘 **Last-used times** | Derived from real `tool/call` events in `~/.dsh/sessions/**/session.jsonl[.zstd]` — per tool *and* per server. If a tool was never used, no timestamp is shown (never fabricated). |
-| 🔍 **Live search** | Filter by tool name, raw name, description or server; auto-refresh every 10 s plus a manual refresh button. |
+| 🕘 **Last-used times & usage** | Derived from real `tool/call` events in `~/.dsh/sessions/**/session.jsonl[.zstd]` — per tool *and* per server, plus a **Usage** tab with total calls, a calls-per-day chart and the most-used tools. |
+| 🔍 **Live search** | Filter by tool name, raw name, description, server **or parameter names**; auto-refresh every 10 s plus a manual refresh button. |
+| 🎯 **Per-session view** | Toggle to see only the tools the current session's agent really sees (resolved from the session's agent scope). |
+| ❤️ **Favorites & sorting** | Star servers/tools; sort by name / tools / last-used / favorites. State persists in `localStorage`. |
+| ⚕️ **Health checks** | One-click probe of streamable-http endpoints (HEAD) → up/down badge per server. |
+| 📤 **Export** | Download the whole inventory as JSON or Markdown. |
 | 🧩 **Non-MCP context** | A collapsible list of the other (built-in / plugin) globally-registered tools, so you can see the whole tool landscape at a glance. |
+
+## ⚙️ Configuration
+
+The plugin accepts an optional `config` object on its row in `cordis.patch.yml`:
+
+```yaml
+- insert:
+    - id: mcp-view
+      name: 'dsh-mcp-view'
+      config:
+        enabled: true          # master switch (default true)
+        announceToAgent: true  # announce the plugin in the model's prompt band (default true)
+```
 
 ## 📸 Screenshots
 
