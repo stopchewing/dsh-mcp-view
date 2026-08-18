@@ -3,16 +3,12 @@
     "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": ["ES2022", "DOM"],
     "types": ["node"],
-    "allowJs": true,
-    "checkJs": true,
+    "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "strict": false,
-    "noImplicitAny": false,
-    "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["lib/index.js"]
+  "include": ["src/index.ts"]
 }

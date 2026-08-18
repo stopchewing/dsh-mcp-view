@@ -155,13 +155,23 @@ No. The session scan is incremental (only changed files are re-read) and rate-li
 
 ```
 dsh-mcp-view/
+├─ src/
+│  └─ index.ts      # host plugin (TypeScript): route + inventory + session scan
 ├─ lib/
-│  ├─ index.js      # host plugin: route + inventory + session scan
+│  ├─ index.js      # compiled host output (npm run build)
 │  └─ client.js     # browser bundle (window.__ModuleLoader__)
+├─ test/            # node --test unit tests
 ├─ cordis.patch.yml # profile roster insert
 ├─ docs/            # preview data, template, screenshots, architecture
 └─ package.json     # dsh.bundle.patch + dsh.client manifest
 ```
+
+The host plugin is written in TypeScript (`src/index.ts`); compile it with
+`npm run build` (emits `lib/index.js` + types). The browser bundle
+(`lib/client.js`) uses the DSH module-loader format and is maintained as a
+checked JS bundle. Run `npm test` (Node's built-in test runner) and
+`npm run typecheck` locally.
+
 
 Rebuild the README preview screenshots (requires Chrome):
 

@@ -4,13 +4,18 @@
   "description": "MCP Tools panel for the DeepSeek Harness Web GUI: see every MCP server and tool available in your session, grouped by server, with transport info, JSON schemas, live search and last-used times derived from real session logs.",
   "type": "module",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "exports": {
-    ".": "./lib/index.js",
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
     "./client": "./lib/client.js",
     "./package.json": "./package.json"
   },
   "files": [
     "lib",
+    "src",
     "cordis.patch.yml",
     "README.md",
     "README.zh.md",
@@ -23,6 +28,7 @@
     "node": "^22.19.0 || >=24.0.0"
   },
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
     "test": "node --test",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
