@@ -25,11 +25,13 @@ jobs:
         run: npm run typecheck || echo "typecheck: skipped (no deps installed on this CI)"
 
   publish:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') && env.NPM_TOKEN != ''
     needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
