@@ -81,6 +81,25 @@
   .dmv-otherHead:hover{background:var(--interactive-bg-hover)}
   .dmv-otherChips{flex:none;flex-wrap:wrap;gap:4px;padding:0 10px 9px;display:flex}
   .dmv-chip{color:var(--label-secondary);background:var(--bg-base);border:1px solid var(--border-l1);border-radius:6px;padding:1px 6px;font-family:var(--mono);font-size:10.5px;white-space:nowrap}
+  /* stats / usage view */
+  .dmv-tabs{flex:none;gap:2px;display:flex;border-bottom:1px solid var(--border-l1)}
+  .dmv-tab{color:var(--label-secondary);cursor:pointer;white-space:nowrap;background:0 0;border:none;border-bottom:2px solid transparent;border-radius:6px 6px 0 0;padding:5px 12px;font-size:12.5px;font-weight:600}
+  .dmv-tab[data-active]{color:var(--label-primary);border-bottom-color:var(--state-business-primary)}
+  .dmv-stats{flex-direction:column;flex:1;min-height:0;gap:10px;display:flex;overflow-y:auto}
+  .statBig{display:flex;gap:14px;flex:none}
+  .statCard{flex:1;background:var(--bg-layer-2);border:1px solid var(--border-l1);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+  .statVal{font-size:20px;font-weight:700;color:var(--label-primary);font-family:var(--mono)}
+  .statLbl{font-size:11px;color:var(--label-tertiary)}
+  .statDays{display:flex;align-items:flex-end;gap:4px;height:64px;flex:none;padding:0 2px}
+  .statDay{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;min-width:0}
+  .statBar{background:var(--state-business-primary);border-radius:3px 3px 0 0;opacity:.85}
+  .statDayLbl{font-size:8.5px;color:var(--label-tertiary);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .statTopTitle{font-size:12px;font-weight:600;color:var(--label-primary);flex:none}
+  .statTopRow{display:flex;align-items:center;gap:8px;font-size:11.5px;padding:3px 0;flex:none}
+  .statTopTrack{height:6px;border-radius:3px;background:var(--interactive-bg-hover);flex:none;overflow:hidden;width:120px}
+  .statTopFill{height:100%;background:var(--state-business-primary)}
+  .statTopName{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--mono);color:var(--label-primary)}
+  .statTopCount{color:var(--label-secondary);font-family:var(--mono);flex:none}
 </style>
 </head>
 <body>
@@ -111,6 +130,7 @@
 const DATA = __DATA__;
 const THEME = new URLSearchParams(location.search).get("theme") === "dark" ? "dark" : "light";
 document.documentElement.dataset.theme = THEME;
+const VIEW = new URLSearchParams(location.search).get("view") === "usage" ? "usage" : "servers";
 
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 function used(iso){ if(!iso) return null; const ms=Date.now()-Date.parse(iso); if(!isFinite(ms)) return null;
@@ -173,7 +193,44 @@ function render(){
     + '<input class="dmv-search" placeholder="Filter tools, servers…" value="" spellcheck="false" />'
     + '<div class="dmv-body">'+body+'</div>';
 }
-render();
+function renderUsage(){
+  const u = DATA.usage || { totalCalls: 0, byDay: [], topTools: [], capped: false };
+  const byDay = u.byDay || [];
+  let maxDay = 1; byDay.forEach(function(d){ maxDay = Math.max(maxDay, d.count); });
+  const top = u.topTools || [];
+  let maxTop = 1; top.forEach(function(t){ maxTop = Math.max(maxTop, t.count); });
+  const last = byDay.length ? byDay[byDay.length-1].count : 0;
+
+  const dayBars = byDay.slice(-14).map(function(d){
+    const h = Math.max(4, Math.round((d.count/maxDay)*44));
+    return '<div class="statDay" title="'+d.day+': '+d.count+'"><div class="statBar" style="height:'+h+'px"></div><div class="statDayLbl">'+d.day.slice(5)+'</div></div>';
+  }).join('');
+
+  const topRows = top.map(function(t){
+    const w = Math.round((t.count/maxTop)*100);
+    return '<div class="statTopRow"><div class="statTopTrack"><div class="statTopFill" style="width:'+w+'%"></div></div><span class="statTopName">'+esc(t.name)+'</span><span class="statTopCount">'+t.count+'</span></div>';
+  }).join('');
+
+  const cards = '<div class="statCard"><div class="statVal">'+u.totalCalls+'</div><div class="statLbl">tool calls (session logs)</div></div>'
+    + '<div class="statCard"><div class="statVal">'+last+'</div><div class="statLbl">calls today</div></div>'
+    + '<div class="statCard"><div class="statVal">'+top.length+'</div><div class="statLbl">MCP tools used</div></div>';
+
+  document.getElementById('panel').innerHTML =
+    '<div class="dmv-panelHeader"><h2 class="dmv-panelTitle">'+icon()+' MCP Tools<span class="dmv-countBadge">'+DATA.totalMcpTools+'</span></h2>'
+    + '<button class="dmv-iconButton" data-label>−</button>'
+    + '<button class="dmv-iconButton">'+refreshSvg+'</button>'
+    + '<button class="dmv-iconButton">'+closeSvg+'</button></div>'
+    + '<div class="dmv-summary"><span>'+(DATA.servers?DATA.servers.length:0)+' servers</span><span>'+DATA.totalMcpTools+' MCP tools</span><span>'+DATA.otherToolCount+' other</span><span>usage from session logs</span></div>'
+    + '<div class="dmv-tabs"><button class="dmv-tab">Servers</button><button class="dmv-tab" data-active>Usage</button></div>'
+    + '<div class="dmv-stats"><div class="statBig">'+cards+'</div>'
+    + (dayBars ? '<div class="statDays">'+dayBars+'</div>' : '')
+    + (topRows ? '<div class="statTopTitle">Most used MCP tools</div><div class="statTopList">'+topRows+'</div>' : '')
+    + '</div>';
+}
+const refreshSvg = '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="display:block"><path d="M13.65 8a5.65 5.65 0 1 1-1.65-4L13.5 2.5V7h-4.5l1.9-1.9A4 4 0 1 0 12 8h1.65Z" fill="currentColor"/></svg>';
+const closeSvg = '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="display:block"><path d="M4.5 4.5 11.5 11.5M11.5 4.5 4.5 11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+
+if (VIEW === "usage") { renderUsage(); } else { render(); }
 </script>
 </body>
 </html>

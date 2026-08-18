@@ -33,15 +33,20 @@ DSH запускает ваши MCP-серверы (документация, с
 | 🖥 **Все серверы в одной панели** | Каждый экземпляр `dsh-mcp-client` из вашего профиля: транспорт (`stdio` / `streamable-http`) и endpoint (команда или URL), плюс состояние подключения (активен / отключён / нет инструментов). |
 | 🗂 **Свёрнуто по умолчанию** | Серверы складываются в одну компактную строку; клик раскрывает список инструментов. `+` / `−` в шапке разворачивает или сворачивает всё сразу. |
 | 🧬 **Полные JSON-схемы** | У каждого инструмента — исходное имя, описание и точный `inputSchema`, который видит модель; раскрывается и красиво форматируется. |
-| 🕘 **Время последнего использования** | Извлекается из реальных событий `tool/call` в `~/.dsh/sessions/**/session.jsonl[.zstd]` — и для инструмента, и для сервера. Если инструмент ни разу не вызывался, время не показывается (никогда не выдумывается). |
-| 🔍 **Живой поиск** | Фильтр по имени инструмента, исходному имени, описанию или серверу; автообновление каждые 10 с плюс кнопка ручного обновления. |
+| 🕘 **Последнее использование и статистика** | Из событий `tool/call` в `~/.dsh/sessions/**/session.jsonl[.zstd]` — на инструмент и сервер, плюс вкладка **Usage**: всего вызовов, график по дням, самые частые инструменты. |
+| 🔍 **Живой поиск** | Фильтр по имени инструмента, исходному имени, описанию, серверу **или именам параметров**; автообновление каждые 10 с плюс кнопка ручного обновления. |
+| 🎯 **Режим «текущая сессия»** | Переключатель: показывать только инструменты, которые реально видит агент текущей сессии (по scope агента сессии). |
+| ❤️ **Избранное и сортировка** | Звёзды для серверов/инструментов; сортировка по имени / числу инструментов / последнему использованию / избранному; состояние в `localStorage`. |
+| ⚕️ **Проверка здоровья** | Кнопка: probe streamable-http эндпоинтов (HEAD) → бейдж up/down на сервере. |
+| 📤 **Экспорт** | Скачивание всего инвентаря в JSON или Markdown. |
 | 🧩 **Контекст не-MCP инструментов** | Сворачиваемый список остальных глобально зарегистрированных инструментов (встроенных / плагинных) — вся картина инструментов в одном взгляде. |
 
 ## 📸 Скриншоты
 
-| Светлая тема | Тёмная тема |
-|---|---|
-| ![light](docs/screenshots/panel-light.png) | ![dark](docs/screenshots/panel-dark.png) |
+| | Светлая тема | Тёмная тема |
+|---|---|---|
+| **Servers** | ![servers light](docs/screenshots/panel-light.png) | ![servers dark](docs/screenshots/panel-dark.png) |
+| **Usage** | ![usage light](docs/screenshots/panel-usage-light.png) | ![usage dark](docs/screenshots/panel-usage-dark.png) |
 
 ## ⚡ Быстрый старт
 
@@ -87,6 +92,19 @@ dsh plugin --profile web add link:/absolute/path/to/dsh-mcp-view
 3. Перезапустите `dsh web` и нажмите **F5**.
 
 > Файл патча профиля отслеживается, поэтому host-половина активируется «на лету»; client-бандл отдаётся свежим по `/plugins/dsh-mcp-view/client.js` — браузеру достаточно одного обновления страницы.
+
+## ⚙️ Конфигурация
+
+Плагин принимает необязательный объект `config` на своей строке в `cordis.patch.yml`:
+
+```yaml
+- insert:
+    - id: mcp-view
+      name: 'dsh-mcp-view'
+      config:
+        enabled: true          # мастер-выключатель (по умолчанию true)
+        announceToAgent: true  # анонсировать плагин в промпте агента (по умолчанию true)
+```
 
 ## 🎛 Использование
 
@@ -138,22 +156,32 @@ dsh plugin --profile web add link:/absolute/path/to/dsh-mcp-view
 
 ```
 dsh-mcp-view/
+├─ src/
+│  └─ index.ts      # host-плагин (TypeScript): роут + инвентарь + скан сессий
 ├─ lib/
-│  ├─ index.js      # host-плагин: роут + инвентарь + сканирование сессий
+│  ├─ index.js      # скомпилированный host (npm run build)
 │  └─ client.js     # браузерный бандл (window.__ModuleLoader__)
+├─ test/            # node --test unit-тесты
 ├─ cordis.patch.yml # вставка в реестр профиля
 ├─ docs/            # данные превью, шаблон, скриншоты, архитектура
 └─ package.json     # манифест dsh.bundle.patch + dsh.client
 ```
 
+Host-плагин написан на TypeScript (`src/index.ts`); компилируется командой
+`npm run build` (выдаёт `lib/index.js` + типы). Браузерный бандл
+(`lib/client.js`) использует формат модулей DSH и ведётся как проверенный
+JS-бандл. Локально запускай `npm test` (встроенный тест-раннер Node) и
+`npm run typecheck`.
+
 Пересборка скриншотов превью для README (нужен Chrome):
 
 ```sh
-# 1. слить живой инвентарь + скан сессий в docs/preview.html
-#    (docs/preview-data.json + docs/preview.template.html → docs/preview.html)
-# 2. скриншот через headless Chrome:
-chrome --headless=new --screenshot=docs/screenshots/panel-light.png --window-size=1120,760 "file:///abs/path/docs/preview.html?theme=light"
-#    для тёмной темы — параметр ?theme=dark
+# 1. слить данные в docs/preview.html
+#    (node docs/build-preview.mjs из preview-data.json + preview.template.html)
+# 2. скриншот через headless Chrome (?view=servers — серверы / ?view=usage — статистика):
+chrome --headless=new --screenshot=docs/screenshots/panel-light.png --window-size=1120,760 "file:///abs/path/docs/preview.html?view=servers&theme=light"
+chrome --headless=new --screenshot=docs/screenshots/panel-usage-light.png --window-size=1120,760 "file:///abs/path/docs/preview.html?view=usage&theme=light"
+#    для тёмной темы — параметр theme=dark
 ```
 
 ## 🤝 Вклад в проект

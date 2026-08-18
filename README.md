@@ -56,9 +56,10 @@ The plugin accepts an optional `config` object on its row in `cordis.patch.yml`:
 
 ## 📸 Screenshots
 
-| Light | Dark |
-|---|---|
-| ![light](docs/screenshots/panel-light.png) | ![dark](docs/screenshots/panel-dark.png) |
+| | Light | Dark |
+|---|---|---|
+| **Servers** | ![servers light](docs/screenshots/panel-light.png) | ![servers dark](docs/screenshots/panel-dark.png) |
+| **Usage** | ![usage light](docs/screenshots/panel-usage-light.png) | ![usage dark](docs/screenshots/panel-usage-dark.png) |
 
 ## ⚡ Quick start
 

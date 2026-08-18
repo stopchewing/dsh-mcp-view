@@ -33,15 +33,20 @@ DSH 会运行你的 MCP 服务器（文档、构建、分析——任意你配�
 | 🖥 **一个面板看全部服务器** | 配置里的每个 `dsh-mcp-client` 实例，含传输方式（`stdio` / `streamable-http`）与端点（命令或 URL），以及连接状态（运行中 / 已禁用 / 无工具）。 |
 | 🗂 **默认折叠** | 服务器折叠成一行紧凑条目，点击即可展开工具列表；面板头部的 `+` / `−` 一键全部展开或收起。 |
 | 🧬 **完整 JSON Schema** | 每个工具展示原始名称、描述和模型实际看到的 `inputSchema`，可展开、美化显示。 |
-| 🕘 **最近使用时间** | 从 `~/.dsh/sessions/**/session.jsonl[.zstd]` 中的真实 `tool/call` 事件提取——工具级与服务器级都有。若某工具从未被调用，则不显示时间（绝不造假）。 |
-| 🔍 **实时搜索** | 按工具名、原始名、描述或服务器过滤；每 10 秒自动刷新，另有手动刷新按钮。 |
+| 🕘 **最近使用时间与用量** | 从 `~/.dsh/sessions/**/session.jsonl[.zstd]` 中的真实 `tool/call` 事件提取——工具级与服务器级都有，另有用量页：总调用数、每日调用图、最常用工具。 |
+| 🔍 **实时搜索** | 按工具名、原始名、描述、服务器**或参数名**过滤；每 10 秒自动刷新，另有手动刷新按钮。 |
+| 🎯 **按会话视图** | 可切换到只显示当前会话 agent 真正可见的工具（按会话的 agent scope 解析）。 |
+| ❤️ **收藏与排序** | 收藏服务器/工具；按名称/工具数/最近使用/收藏排序；状态保存在 `localStorage`。 |
+| ⚕️ **健康检查** | 一键探测 streamable-http 端点（HEAD）→ 每个服务器的 up/down 徽标。 |
+| 📤 **导出** | 将完整清单下载为 JSON 或 Markdown。 |
 | 🧩 **非 MCP 工具上下文** | 可折叠展示其它（内置 / 插件）全局注册的工具，一眼看清完整的工具版图。 |
 
 ## 📸 截图
 
-| 浅色 | 深色 |
-|---|---|
-| ![light](docs/screenshots/panel-light.png) | ![dark](docs/screenshots/panel-dark.png) |
+| | 浅色 | 深色 |
+|---|---|---|
+| **Servers** | ![servers light](docs/screenshots/panel-light.png) | ![servers dark](docs/screenshots/panel-dark.png) |
+| **Usage** | ![usage light](docs/screenshots/panel-usage-light.png) | ![usage dark](docs/screenshots/panel-usage-dark.png) |
 
 ## ⚡ 快速开始
 
@@ -87,6 +92,19 @@ dsh plugin --profile web add link:/absolute/path/to/dsh-mcp-view
 3. 重启 `dsh web`，然后按 **F5** 刷新页面。
 
 > profile 的补丁文件是被监听的，host 半区会热生效；client 包在 `/plugins/dsh-mcp-view/client.js` 每次实时读取——浏览器只需刷新一次页面。
+
+## ⚙️ 配置
+
+插件在 `cordis.patch.yml` 的对应行上接受可选的 `config` 对象：
+
+```yaml
+- insert:
+    - id: mcp-view
+      name: 'dsh-mcp-view'
+      config:
+        enabled: true          # 总开关（默认 true）
+        announceToAgent: true  # 是否在模型提示带中宣告插件（默认 true）
+```
 
 ## 🎛 使用方法
 
@@ -138,22 +156,31 @@ dsh plugin --profile web add link:/absolute/path/to/dsh-mcp-view
 
 ```
 dsh-mcp-view/
+├─ src/
+│  └─ index.ts      # host 插件（TypeScript）：路由 + 清单 + 会话扫描
 ├─ lib/
-│  ├─ index.js      # host 插件：路由 + 清单 + 会话扫描
+│  ├─ index.js      # 编译后的 host 产物（npm run build）
 │  └─ client.js     # 浏览器包（window.__ModuleLoader__）
+├─ test/            # node --test 单元测试
 ├─ cordis.patch.yml # profile 名单插入
 ├─ docs/            # 预览数据、模板、截图、架构图
 └─ package.json     # dsh.bundle.patch + dsh.client 清单
 ```
 
+host 插件用 TypeScript 编写（`src/index.ts`）；执行 `npm run build` 编译
+（输出 `lib/index.js` 与类型）。浏览器包（`lib/client.js`）沿用 DSH 的
+module-loader 格式，以经过检查的 JS 包维护。本地运行 `npm test`（Node 内置
+测试运行器）与 `npm run typecheck`。
+
 重新生成 README 预览截图（需要 Chrome）：
 
 ```sh
 # 1. 将实时清单 + 会话扫描合并进 docs/preview.html
-#    （docs/preview-data.json + docs/preview.template.html → docs/preview.html）
-# 2. 用 headless Chrome 截图：
-chrome --headless=new --screenshot=docs/screenshots/panel-light.png --window-size=1120,760 "file:///abs/path/docs/preview.html?theme=light"
-#    深色同理，参数改为 ?theme=dark
+#    （node docs/build-preview.mjs 由 preview-data.json + preview.template.html 生成）
+# 2. 用 headless Chrome 截图（?view=servers 服务页 / ?view=usage 用量页）：
+chrome --headless=new --screenshot=docs/screenshots/panel-light.png --window-size=1120,760 "file:///abs/path/docs/preview.html?view=servers&theme=light"
+chrome --headless=new --screenshot=docs/screenshots/panel-usage-light.png --window-size=1120,760 "file:///abs/path/docs/preview.html?view=usage&theme=light"
+#    深色同理，参数改为 theme=dark
 ```
 
 ## 🤝 参与贡献

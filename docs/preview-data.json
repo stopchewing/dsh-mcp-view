@@ -271,5 +271,35 @@
       "tools": []
     }
   ],
+  "usage": {
+    "available": true,
+    "scannedAt": "2026-08-17T12:00:00.000Z",
+    "capped": false,
+    "totalCalls": 1482,
+    "byDay": [
+      { "day": "2026-08-04", "count": 41 },
+      { "day": "2026-08-05", "count": 63 },
+      { "day": "2026-08-06", "count": 88 },
+      { "day": "2026-08-07", "count": 120 },
+      { "day": "2026-08-08", "count": 76 },
+      { "day": "2026-08-09", "count": 34 },
+      { "day": "2026-08-10", "count": 95 },
+      { "day": "2026-08-11", "count": 152 },
+      { "day": "2026-08-12", "count": 139 },
+      { "day": "2026-08-13", "count": 107 },
+      { "day": "2026-08-14", "count": 184 },
+      { "day": "2026-08-15", "count": 98 },
+      { "day": "2026-08-16", "count": 156 },
+      { "day": "2026-08-17", "count": 129 }
+    ],
+    "topTools": [
+      { "name": "mcp__search-mcp__search", "count": 327 },
+      { "name": "mcp__docs-mcp__get_page", "count": 214 },
+      { "name": "mcp__build-mcp__run_tests", "count": 168 },
+      { "name": "mcp__analytics-mcp__query_metrics", "count": 145 },
+      { "name": "mcp__build-mcp__build_project", "count": 121 },
+      { "name": "mcp__notifications-mcp__send_notification", "count": 87 }
+    ]
+  },
   "unknownTools": []
 }

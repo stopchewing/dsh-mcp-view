@@ -31,7 +31,8 @@ test("client bundle registers the plugin and exposes apply/inject", () => {
 		useRef: () => ({}),
 		useReducer: (_r, init) => [init, () => {}],
 		useSyncExternalStore: (_s, g) => g(),
-		createElement: () => ({})
+		createElement: () => ({}),
+		Component: class {}
 	};
 	const ex = h.factory((spec) => {
 		if (spec === "react") return fakeReact;
@@ -50,7 +51,8 @@ test("client plugin registers both slots when applied", () => {
 		useRef: () => ({}),
 		useReducer: (_r, init) => [init, () => {}],
 		useSyncExternalStore: (_s, g) => g(),
-		createElement: () => ({})
+		createElement: () => ({}),
+		Component: class {}
 	};
 	const ex = h.factory((spec) => {
 		if (spec === "react") return fakeReact;
