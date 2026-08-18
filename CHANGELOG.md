@@ -27,6 +27,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Model guidance**: the plugin announces itself in the tool-guidance band (`systemPrompt.section`).
 - Repo polish: screenshots (light/dark), architecture diagram, MIT license, changelog.
 
+## [0.2.1] - 2026-08-18
+
+### Changed
+
+- **Per-session view restored**: the slot `useSessions` hook is now called only
+  inside a `SessionsErrorBoundary`, so a hook failure can never prevent the
+  panel from opening (it degrades to the global view). Session scoping works
+  when the hook is healthy.
+- **Usage screenshot** added to the README (via a `?view=usage` preview
+  branch and fictional stats).
+- README (en/zh/ru) synced: new feature rows, Config section, TS-based
+  Development block.
+
 ## [0.2.0] - 2026-08-17
 
 ### Added
@@ -56,6 +69,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   repository contains no trace of a specific user's MCP setup.
 - Author metadata uses the public GitHub handle.
 
+[0.2.1]: https://github.com/stopchewing/dsh-mcp-view/releases/tag/v0.2.1
 [0.2.0]: https://github.com/stopchewing/dsh-mcp-view/releases/tag/v0.2.0
 [0.1.1]: https://github.com/stopchewing/dsh-mcp-view/releases/tag/v0.1.1
 [0.1.0]: https://github.com/stopchewing/dsh-mcp-view/releases/tag/v0.1.0

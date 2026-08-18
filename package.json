@@ -1,6 +1,6 @@
 {
   "name": "dsh-mcp-view",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "MCP Tools panel for the DeepSeek Harness Web GUI: see every MCP server and tool available in your session, grouped by server, with transport info, JSON schemas, live search and last-used times derived from real session logs.",
   "type": "module",
   "main": "lib/index.js",
